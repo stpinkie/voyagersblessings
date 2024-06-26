@@ -39,6 +39,10 @@ contract VoyagersBlessing {
         return (address(this).balance);
     }
 
+    function nominateVoyagers (address[1000] memory voyagerNominations) saintOnly public {
+        theVoyagers = voyagerNominations;
+    }
+
     function ponderBlessingShare (uint256 _newBlessingShare) saintOnly public {
         blessingShare = _newBlessingShare;
     }
@@ -63,13 +67,14 @@ contract VoyagersBlessing {
             (bool blessingSuccess, ) = theVoyagers[i].call{value: blessingShare}("");
           require(blessingSuccess, "The blessing was not successfully bequeathed.");
         }
-
+        blessingsSent = true;
         return ("The blessings have been bequeathed upon the Voyagers.");
    }
 
     function emptyBalance () saintOnly public {
+        require (address(this).balance > 0, "There are no blessings that remain to be recuperated.");
         (bool drainSuccess, ) = patronSaint.call{value: address(this).balance}("");
-        require(drainSuccess, "The blessing was not successfully bequeathed.");
+        require(drainSuccess, "The remaining blessings have been recuperated.");
     }
 
 }
