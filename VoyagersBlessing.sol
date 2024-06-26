@@ -60,15 +60,16 @@ contract VoyagersBlessing {
     function bequeathBlessings() saintOnly external returns (string memory) {
         require (beforeTheBlessing() == true, "Insufficient balance to complete the blessing. Please make adjustments.");
         for (uint256 i = 0; i < theVoyagers.length; i++) {
-            (bool success, ) = theVoyagers[i].call{value: blessingShare}("");
-          require(success, "Transfer failed");
+            (bool blessingSuccess, ) = theVoyagers[i].call{value: blessingShare}("");
+          require(blessingSuccess, "The blessing was not successfully bequeathed.");
         }
 
         return ("The blessings have been bequeathed upon the Voyagers.");
    }
 
-    function emptyBalance () public {
-
+    function emptyBalance () saintOnly public {
+        (bool drainSuccess, ) = patronSaint.call{value: address(this).balance}("");
+        require(drainSuccess, "The blessing was not successfully bequeathed.");
     }
 
 }
